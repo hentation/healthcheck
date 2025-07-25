@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: user1  # Важно: именно POSTGRES_*, а не DB_*
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  healthcheck:
+    build: .
+    container_name: my_healthcheck
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      DB_USER: user1
+      DB_PASSWORD: 1234
+      DB_NAME: mydb
+      DB_HOST: postgres
+      DB_PORT: "5432"
+
+volumes:
+  pg_data:
